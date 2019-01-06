@@ -74,7 +74,7 @@ We have produced a regression tree with Sales as the response and the other vari
 
 Our tree has eighteen (18) terminal nodes and the Residual mean deviance for the tree is 2.36.A small residual mean deviance indicates a good fit to the training data. Test MSE of our tree is 4.1. 
 
-In order to intepret the results better we can calculate RMSE which is equal to 2.036884. That means that when we make a prediction based on our model,we expected to miss on average almost 2 units of sales in any prediction.
+In order to intepret the results better we can calculate RMSE which is equal to 2.04. That means that when we make a prediction based on our model,we expected to miss on average almost 2 units of sales in any prediction.
 
 
 **(c)** Use cross-validation in order to determine the optimal level of tree complexity. Does pruning the tree improve the test error rate?
@@ -111,7 +111,7 @@ mean((yhat.prune - Carseats.test$Sales)^2)
 ```
 
 
-By using the pruned tree to make predictions on the test set we estimated test MSE to be higher(test MSE = 5.1) than the unpruned tree. That would generally mean that our problem may suffer from underfitting.
+By using the pruned tree to make predictions on the test set we estimated test MSE to be higher(test MSE = 5.1) than the unpruned tree. That would generally mean that our model may suffer from underfitting.
 
 It is worth mentioning that, a pruned tree will increase the bias and if the reduction of the variance is not significant we may see an increase to MSE(as in our case). Although, we get higher intepretability in our model as we have smaller size in our tree.
 
@@ -153,7 +153,7 @@ mean((yhat.rf - Carseats.test$Sales)^2)
 
 Random Forests have the same idea as bagging approach,although, each time we build a tree on bootstrapped training sample, we choose m = $\sqrt{p}$ or m = p/3 predictors from the full set of p predictors(bagging approach).By averaging many highly correlated quantities, we don't get large reduction to variance. In order to avoid that, we leave very strong predictors randomly out in each split and "de-corelate" the bagged trees leading to more reduction in variance.
 
-In this case, random forests with m = $p/3$ (usually picked for regression trees) have a higher test MSE equal to 3.237463 than the bagging approach where we used all the predictors(m=p) for our B different regression trees.That means that we need those strong predictors inside our each split in order to have a better prediction. Although,we can also see a reduction to the MSE compared to our first simple regression tree methods (pruned and unpruned trees).
+In this case, random forests with m = $p/3$ (usually picked for regression trees) have a higher test MSE equal to 3.2 than the bagging approach where we used all the predictors(m=p) for our B different regression trees.That means that we need those strong predictors inside our each split in order to have a better prediction. Although,we can also see a reduction to the MSE compared to our first simple regression tree methods (pruned and unpruned trees).
 
 ```{r}
 importance(rf.carseats)
@@ -175,7 +175,7 @@ library(ISLR)
 set.seed(1)
 summary(OJ) #summary our data
 
-train <- sample(1:nrow(OJ),800) #train sample with 800 observations
+train <- sample(dim(OJ)[1],800) #train sample with 800 observations
 OJ.train <- OJ[train,]  #create OJ.train
 OJ.test <- OJ[-train,] #create OJ.test(remaining observations)
 ```
@@ -203,7 +203,7 @@ oj.tree
 
 We will pick randomly node **20)** in order to interpred the information displayed.
 
-First, we can see the name of the splitting variable (SpecialCH) and the split criterion which in this case is SpecialCH < 0.5. Then we have the number of observations in that branch (70) and the deviance = 60.89.Next, MM is the the classification of Sales chosen from the possible classes of CH or MM.Then,we get the fraction of observations in that branch that take on values of CH(16%) and MM(84%) where the first fraction indicates CH and the second indicates MM. Lastly, asterisk ( * ) indicates that our branch lead to terminal node.
+First, we can see the name of the splitting variable (SpecialCH) and the split criterion which in this case is SpecialCH < 0.5. Then we have the number of observations in that branch (70) and the deviance = 60.89.Next, MM is the the classification of Sales chosen from the possible classes of CH or MM. In addition,we get the fraction of observations in that branch that take on values of CH(16%) and MM(84%) where the first fraction indicates CH and the second indicates MM. Lastly, asterisk ( * ) indicates that our branch lead to terminal node.
 
 **(d)** Create a plot of the tree, and interpret the results.
 
@@ -243,7 +243,7 @@ cv.oj <- cv.tree(oj.tree,FUN=prune.misclass)
 cv.oj
 ```
 
-We can see that the lowest cross validation error is for the size = 5 and size = 8 where the cross validation error is equal to 152. Early pruning method, indicates that we have to prune our tree at size = 5 if there is no significant reduce in our cross validation error after that point. By pruning the tree to be size = 5 , we can get no only a better interpetation but also is computation more efficient in order to fit our model.
+We can see that the lowest cross validation error is for the size = 5 and size = 8 where the cross validation error is equal to 152. Early pruning method, indicates that we have to prune our tree at size = 5 if there is no significant reduce in our cross validation error after that point. By pruning the tree to be size = 5 , we can get no only a better interpetation but also our model is more efficient.
 
 **(g)** Produce a plot with tree size on the x-axis and cross-validated classification error rate on the y-axis.
 
@@ -271,7 +271,7 @@ plot(oj.prune)
 text(oj.prune,pretty=0)
 ```
 
-We can see that our pruned tree containes thre variables **LoyalCH**, **PriceDiff** and **SpecialCH** as in the unpruned tree we had 4. Of course, **LoyalCH** is the most important variable, as the PriceDiff is the second most important. 
+We can see that our pruned tree with size = 5 contains thre variables **LoyalCH**, **PriceDiff** and **SpecialCH** as in the unpruned tree we had 4. Of course, **LoyalCH** is the most important variable, as the PriceDiff is the second most important. 
 
 **(j)** Compare the training error rates between the pruned and unpruned trees. Which is higher?
 
@@ -279,7 +279,7 @@ We can see that our pruned tree containes thre variables **LoyalCH**, **PriceDif
 summary(oj.prune)
 ```
 
-Training Error Rate in pruned tree is the same as unpruned tree is 0.165. Although with smaller tree we gain higher intepretability in our model and it is more efficient because we build smaller tree.
+Training Error Rate in pruned tree is 0.165 same asthe training error rate in the unpruned tree. As it has already been mentioned, with smaller tree we gain higher intepretability in our model and it is more efficient because we build smaller tree.
 
 **(k)** Compare the test error rates between the pruned and unpruned trees. Which is higher?
 
@@ -313,10 +313,10 @@ with gas mileage below the median.
 library(ISLR)
 Auto_b <- Auto
 gas.median <- median(Auto$mpg)
-bin.var <- ifelse(Auto$mpg > gas.median, 1 , 0)
+bin.var <- ifelse(Auto$mpg > gas.median, 1 , 0) #create the binary variable
 Auto_b$mpglevel = as.factor(bin.var)
-Auto_b$mpg <-NULL
-Auto_b$name <- NULL
+Auto_b$mpg <-NULL #remove mpg as we have already created mpglevel
+Auto_b$name <- NULL #remove name
 ```
 
 
@@ -331,7 +331,7 @@ tune.out <-tune(svm,mpglevel~.,data=Auto_b,kernel="linear",ranges=list(cost=c(0.
 summary(tune.out)
 ```
 
-After, we have compared SVMs with a linear kernel using a range of values of the cost parameter we found that cost=100 has the best performance of 0.08679487. In order to find the optimum parameter, tune function has used by default 10-fold cross validation and found all differents results for differents cost values.
+After, we have compared SVMs with a linear kernel using a range of values of the cost parameter we found that cost=100 has the best performance of 0.087.On the other hand, we can observe that for cost = 0.001 we have the highest cross-validation error to be 0.135. In order to find the optimum parameter, tune function has used by default 10-fold cross validation and found all differents results for differents cost values.
 
 
 **(c)** Now repeat (b), this time using SVMs with radial and polynomial basis kernels, with different values of gamma and degree and cost. Comment on your results.
@@ -344,7 +344,7 @@ tune.out <- tune(svm, mpglevel ~ ., data = Auto_b, kernel = "polynomial" , range
 summary(tune.out)
 ```
 
-For polynomial SVMs we get the best performance (lowest cross-validation error) to be 0.07910256 for cost = 5 and degree = 3. It is worth mentioning,that tune function has used 10-fold cross validation by default and had found exactly the same error for cost = 10 and degree = 3.
+For polynomial SVMs we get the best performance (lowest cross-validation error) to be 0.079 for cost = 5 and degree = 3. It is worth mentioning,that tune function has used 10-fold cross validation by default and had found exactly the same error for cost = 10 and degree = 3.Last but not least,we have the highest cross-validation error equal to 0.56 for cost=0.01 and degree=2
 
 ```{r}
 set.seed(1)
@@ -352,7 +352,7 @@ tune.out <- tune(svm, mpglevel ~ ., data = Auto_b, kernel = "radial" , ranges = 
 summary(tune.out)
 ```
 
-Finally, for radial kernel, the lowest cross-validation error is 0.07391026 for cost = 1 and gamma = 1 which is the best performance between all models (linear,polynomial,radial)
+Finally, for radial kernel, the lowest cross-validation error is 0.074 for cost = 1 and gamma = 1 which is the best performance between all models (linear,polynomial,radial).
 
 **(d)** Make some plots to back up your assertions in (b) and (c).
 
@@ -381,6 +381,16 @@ plot(svm.linear2,Auto_b,weight~cylinders) # svm with linear kernel, plot mpg ~we
 ```{r}
 svm.radial3 <- svm(mpglevel ~ acceleration + horsepower, data = Auto_b ,kernel = "radial", cost = 1 , gamma = 1)
 plot(svm.radial3,Auto_b,horsepower~acceleration)
+```
+
+We can easily observe from the plots, how in general radial kernels seperate our data in a better and more flexible way. This is what we expected to see, as we have already got the lowest cross validation error.
+
+It is also easy to observe, how the model can overfit the data if we raise sharply our gamma parameter in the graph below.In that case, we expect to have of course higher test MSE and acceleration and hoursepower would not predict very well whether a car gets high or low gas mileage (pink and blue font) .
+
+
+```{r}
+svm.radial4 <- svm(mpglevel ~ acceleration + horsepower, data = Auto_b ,kernel = "radial", cost = 1 , gamma = 100)
+plot(svm.radial4,Auto_b,horsepower~acceleration)
 ```
 
 
@@ -591,7 +601,7 @@ In this problem, you will generate simulated data, and then perform PCA and K-me
 set.seed(1)
 data <- matrix(nrow=60, ncol=50) 
 
-# for i in every column we split our data in to 3 different regions in order to create three different classes. We choose mean sample from 1 to 100 and for the different classes we choose different values for mean (e.g. mean/2 and mean*2)
+# for i in every column we split our data in to 3 different regions in order to create three different classes. We choose mean sample from 1 to 100 and for the different classes we choose different values for mean (e.g. mean=6 and mean=-6)
 
 for(i in 1:ncol(data)) {
   mean <- sample(1:100, size = 1)
@@ -601,7 +611,6 @@ for(i in 1:ncol(data)) {
 }
 plot(data)
 ```
-
 
 **(b)** Perform PCA on the 60 observations and plot the first two principal components??? eigenvector. Use a different color to indicate the observations in each of the three classes. If the three classes appear separated in this plot, then continue on to part (c). If not, then return to part (a) and modify the simulation so that there is greater separation between the three classes. Do not continue to part (c) until the three classes show at least some separation in the first two principal component eigenvectors.
 
@@ -623,9 +632,7 @@ plot(data_pca$x[,1],data_pca$x[,2],col=c(rep("green",20),rep("red",20),rep("purp
 
 We performed K-means algorithm with K = 3 and nstart = 20.Initially, K-means algorithm randomly assigns classses and computes clusters centroids. After that, it assigns observations to the closest cluster centroid and then repeats the process for as many iterations as we have defined in nstart.
 
-From the table, we can see that our K-mean method had succesfully divided our classes in three different subgroups of 20 observations each, which is the same as our simulated data set.
-
-
+From the table, we can see that our K-means method had succesfully divided our classes in three different subgroups of 20 observations each, which is the same as our simulated data set.
 
 
 ```{r}
@@ -647,8 +654,13 @@ km.out$cluster
 table(km.out$cluster, c(rep(1,20), rep(2,20), rep(3,20)))
 ```
 
-In this case,K-means algorithm with K=2 forced our simulated data to be seperated by 2 classes. So the third class "3" have been absorbed and now we have only 2 classes "1" and "2". To be more specific, the first class has absorbed all the points from the class "3" and from the table we can see that we have 40 observations in class "1". On the other hand, class "2" has its initial 20 observations.
+In this case,K-means algorithm with K=2 forced our simulated data to be seperated by 2 clusters So the second class "2"(observations 21-40) have been absorbed and now we have only 2 classes "1" and "2". To be more specific, the first class has absorbed all the points from the class "2" and from the table we can see that we have 40 observations in class "1". On the other hand, class "3" has its initial 20 observations.
 
+It is more clearly if we observe the plot below.(class "1" contains observations 1-40, class "3" contains observations 41-60)
+
+```{r}
+plot(km.out$cluster)
+```
 
 **(e)** Now perform K-means clustering with K = 4, and describe your results.
 
@@ -665,7 +677,7 @@ table(km.out$cluster, c(rep(1,20), rep(2,20), rep(3,20)))
 
 In this case,K-means algorithm with K=4 has seperated our simulated data in 4 clusters(randomly assigned class labels "1","2","3" and "4"). We can observe, that our first two classes have maintened 20 observations each (in our case class "2" and class "4"). On the other hand, our third class has been divided exactly in 2 different clusters "3" and "1" of 10 observations each.
 
-From the graph below, we can also see how our third class (observations 40-60) has been divided into two new clusters "3" and "1".
+From the graph below, we can also see how our third class (observations 41-60) has been divided into two new clusters "3" and "1".
 
 ```{r}
 
