@@ -1,0 +1,426 @@
+---
+title: "CW1_13153946_S_Chouliaras"
+author: "Spyridon Chouliaras  /   MSc Data Science  "
+date: "10/17/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1.Statistical learning methods
+
+ For each of parts (a) through (d), indicate whether we would generally expect the performance of a flexible
+statistical learning method to be better or worse than an inflexible method. Justify your answer.
+
+**(a)** The sample size n is extremely large, and the number of predictors p is small.
+
+**Answer**: A flexible model will perform better in general in this situation. This is because the big volume of sample n will avoid the overfit and of course the biases will be  reduced because of the high complexity of our model
+
+**(b)** The number of predictors p is extremely large, and the number of observations n is small.
+
+**Answer**: An inflexible model will perform better in general in this situation. A flexible model will cause overfitting because of the small number of observations n. This usually means a bigger inflation in variance and a small reduction in bias.
+
+**(c)** The relationship between the predictors and response is highly non-linear.
+
+**Answer**: : A flexible model will perform better in this situation. If the relationship between predictors and response is non-linear then we have to use a more flexible(complex) model in order to find the relationship between them.
+
+**(d)** The variance of the error terms, i.e. $\sigma^2 = Var(\varepsilon)$, is extremely high.
+
+**Answer**: : In general an inflexible model will perform better in this situation. A flexible model will capture too much of the noise in the data due to the large variance of the errors.
+
+## 2.Descriptive analysis
+
+In a higher educational institution the comprehensive applied mathematics exam is comprised of two parts. On the first day, 20 students took the exam, the results of which are presented below:
+
+      Oral exam results:  4, 1, 4, 5, 3, 2, 3, 4, 3, 5, 2, 2, 4, 3, 5, 5, 1, 1, 1, 2.
+      Writtenexamresults: 2, 3, 1, 4, 2, 5, 3, 1, 2, 1, 2, 2, 1, 1, 2, 3, 1, 2, 3, 4.
+
+**(a) **Use R to calculate the mean, the mode, the median, the variance and the standard deviation of the oral and written exams separately and together as well.
+
+```{r}
+oral <- c(4, 1, 4, 5, 3, 2, 3, 4, 3, 5, 2, 2, 4, 3, 5, 5, 1, 1, 1, 2) 
+written <- c(2, 3, 1, 4, 2, 5, 3, 1, 2, 1, 2, 2, 1, 1, 2, 3, 1, 2, 3, 4)
+mean(oral)
+mode(oral)
+median(oral)
+var(oral)
+sd(oral)
+mean(written)
+mode(written)
+median(written)
+var(written)
+sd(written)
+mean(oral+written)
+mode(oral+written)
+median(oral+written)
+var(oral+written)
+sd(oral+written)
+```
+
+**(b)** Find the covariance and correlation between the oral and written exam scores.
+
+```{r}
+cor(oral,written)
+cov(oral,written)
+```
+
+**(c)** Is there a positive or negative or no correlation between the two?
+
+**Answer**: There is a low Negative correlation between oral exams scores and written exams scores: -0.3 <= cor(oral,written) <= 0.
+
+```{r}
+cor(oral,written)
+
+```
+
+**(d)** Is there causation between the two? Justify your answers.
+
+**Answer**:  On this example we have a low negative corellation between oral and written exams scores. This is a strong evidence that there is no causation between oral and written exams scores.
+
+## 3. Descriptive analysis
+
+This exercise involves the Auto data set studied in the class. Make sure that the missing values have been removed from the data.
+
+**(a)** Which of the predictors are quantitative, and which are qualitative?
+
+**Answer**: 
+
+The quantitative predictors are: **mpg,cylinders,displacement,horsepower,weight,acceleration,year**
+
+The qualitative predictors are **name,origin**
+
+**(b)** What is the range of each quantitative predictor? You can answer this using the range() function.
+
+```{r}
+library("ISLR")
+attach(Auto)
+quant_data <- data.frame(mpg,cylinders,displacement,horsepower,weight,acceleration,year)
+apply(quant_data,2,range)
+
+```
+
+**(c) **What is the mean and standard deviation of each quantitative predictor?
+
+```{r}
+apply(quant_data,2,mean)
+apply(quant_data,2,sd)
+```
+
+**(d)** Now remove the 10th through 85th observations. What is the range, mean, and standard deviation of each predictor in the subset of the data that remains?
+
+```{r}
+subset1 <- quant_data[-(10:85),]
+apply(subset1,2,range)
+apply(subset1,2,mean)
+apply(subset1,2,sd)
+```
+
+**(e)** Using the full data set, investigate the predictors graphically, using scatterplots or other tools of your choice. Create some plots highlighting the relationships among the predictors. Comment on your findings.
+
+```{r}
+pairs(Auto)
+```
+
+```{r}
+boxplot(Auto$displacement~Auto$cylinders,xlab="Cylinders",ylab="Displacement") 
+```
+
+- The graph above shoes that there is,in average, a positive relation between the cylinders and the displacement of the car.This is absolutely logical because if we increase the number of the cylinders in an engine then the total swept volume of all the pistons inside the cylinders(displacement) will increase.
+
+```{r}
+boxplot(Auto$mpg~Auto$cylinders,xlab="Cylinders",ylab="MPG",varwitdth = T,col = c(2:6))
+```
+
+-The graph above shoes that the is in average we seem to get more milage per gallon on a 4 cylinder vehicle than the others.
+
+```{r}
+plot(Auto$mpg ~ Auto$weight,xlab="weight",ylab = "MPG")
+```
+
+- The graph above shoes that there is, in average , a negative relation between the weight and the mpg of a car.That means the heavier weight correlates with lower mpg.
+
+
+```{r}
+plot(Auto$mpg ~ Auto$horsepower, xlab = "Horsepower", ylab = "MPG")
+```
+
+- The graph above shoes that there is, in average, a negative relation between the horsepower and the mpg of a car. That means the more the horsepowers in the engine the lower gas mileage in miles per gallon which is more than obvious.
+
+**(f)** Suppose that we wish to predict gas mileage (mpg) on the basis of the other variables. Do your plots suggest that any of the other variables might be useful in predicting mpg? Justify your answer.
+
+```{r}
+boxplot( Auto$mpg ~ Auto$year , xlab ="Year(1900s)", ylab="MPG",varwitdth = T,col = "lightblue")
+```
+
+- The graph above shows that there is, in average, a positive relation between the year of production and the MPG of the car. This makes totally sense due to advances in technology and engineering over time. In general all the predictors are somehow correlated with mpg of the car.  
+
+## 4. Linear Regression
+
+This question involves the use of simple linear regression on the Auto data set.
+
+**(a)**Use the lm() function to perform a simple linear regression with mpg as the response and horsepower as the predictor. Use the summary() function to print the results. Comment on the output. For example:
+
+
+
+```{r}
+attach(Auto)
+lm.fit = lm(mpg ~ horsepower)
+summary(lm.fit)
+```
+
+**i)** Yes, there is a relationship between horsepower and mpg as deterined by testing the null hypothesis of all regression coefficients equal to zero. Since the F-statistic is far larger than 1 and the p-value of the F-statistic is close to zero we can reject the null hypothesis and state there is a statistically significant relationship between horsepower and mpg.
+
+**ii** To calculate the residual error relative to the response we use the mean of the response and the RSE. The mean of mpg is 23.4459. The RSE of the lm.fit was 4.906 which indicates a percentage error of 20.9248%. ##The R2 of the lm.fit was about 0.6059, meaning 60.5948% of the variance in mpg is explained by horsepower.
+
+**iii** The relationship between mpg and horsepower is negative. The more horsepower tha car has the less mpg fuel efficiency the car will have.
+
+**iv** What is the predicted mpg associated with a horsepower of 98? What are the associated 95% confidence and prediction intervals?
+
+```{r}
+
+predict(lm.fit, data.frame(horsepower=c(98)), interval="confidence")
+predict(lm.fit, data.frame(horsepower=c(98)), interval="prediction")
+```
+
+**(b)** Plot the response and the predictor. Use the abline() function to display the least squares regression line.
+
+
+```{r}
+
+plot(horsepower,mpg,xlab = "Horsepower",ylab="MPG",main = "LRegression")
+abline(lm.fit,col="red")
+
+```
+
+**(c)** Plot the 95% confidence interval and prediction interval in the same plot as (b) using different colours and legends.
+
+```{r}
+lm.fit.horsepower = lm(mpg ~ horsepower)
+nd <- data.frame(horsepower=seq(46.0,230,length=392))
+p_conf <- predict(lm.fit.horsepower,interval="confidence",newdata = nd)
+p_pred <- predict(lm.fit.horsepower,interval="prediction",newdata = nd)
+plot(horsepower,mpg,pch = 21 , col = "lightblue",main = "CI / PI")
+abline(lm.fit.horsepower)
+lines(nd$horsepower,p_conf[,"lwr"],lty = 2,col = "blue")
+lines(nd$horsepower,p_conf[,"upr"],lty = 2,col = "blue")
+lines(nd$horsepower,p_pred[,"upr"],lty = 2,col = "red")
+lines(nd$horsepower,p_pred[,"lwr"],lty = 2,col = "red")
+legend("topright",pch=c("-","-"),col=c("blue","red"),legend=c("confidence","prediction"))
+```
+
+## 5. Logistic regression 
+
+
+Using the Boston data set, fit classification models in order to predict whether a given suburb has a crime rate above or below the median. Explore logistic regression models using various subsets of the predictors. Describe your findings.
+
+```{r}
+library(MASS)
+library(ISLR)
+attach(Boston)
+
+summary(Boston)
+```
+**Creating crimbin. It is coded as 1 if the value of crim is above median and 0 otherwise**
+```{r}
+Boston$crimbin<-ifelse(Boston$crim>median(Boston$crim),1,0)
+```
+
+**Visulizing correlation**
+```{r}
+library(corrplot)
+allcor<-cor(Boston[,])
+corrplot.mixed(allcor)
+```
+
+**Devide to test and training data (30-70)**
+
+```{r}
+set.seed(1)
+subset <- sample(1:nrow(Boston), nrow(Boston)*0.70)
+train <- Boston[subset, ]
+test <- Boston[-subset, ]
+```
+
+**Logistic Regression fit the model**
+
+We use as treshold for selecting a predictor 0.6 as indus , nox , age, dis, rad, tax are all have cor values higher than 0.6
+
+```{r}
+glm.fit <- glm(crimbin~indus + nox + age + dis + rad  + tax, data = train, family = binomial)
+glm.probs <- predict(glm.fit, test, type="response")
+glm.pred <- ifelse(glm.probs > 0.5, 1, 0)
+table(test$crimbin, glm.pred, dnn = c("Actual","Predicted"))
+
+mean(glm.pred != test$crimbin)
+```
+
+We may conclude that,for this logistic regression model we have a test error rate of 0.09210526
+
+## 6. Resampling methods
+
+Suppose that we use some statistical learning method to make a prediction for the response Y for a particular value of the predictor X. Carefully describe how we might estimate the standard deviation of our prediction.
+
+**Answer** : 
+
+In order to estimate the standard deviation of our prediction for our statistical learning method, we can use various resampling methods such as K-Fold Cross Validation and Bootstrap.
+
+The k-fold Cross-Validation contains the Validation Set Approach for k = 2 and the Leave-one-out cross-validation(LOOCV) for k = n. Nevertheless we can achieve a good balance between Bias-Variance trade off by using k = 5 or k = 10.The first fold is treated as a validation set and the method fits on the remaining k-1 folds. We can then obtain the predicted value/s using the learning method for our first fold and repeat the same process k times. In the end we can estimate the standard deviation of those estimates so the standard deviation of our prediction. 
+
+Another way to resample the data in order to estimate the standard deviation of the prediction is to use of bootstrap method. This works by repeatedly sampling from our data the pair of values X and Y. For each such sample we can obtain prediction values using the learning method.Finally, we then obtain a histogram for the predicted values (the sampling distribution of the estimator) which we can use to compute the standard deviation and the average value of our estimator.However, we have to consider that bootstrap does so with replacement and this significantly affects the prediction value as opposed to cross validation, that keeps each fold seperate.
+
+
+## 7. Resampling methods
+
+We will now perform cross-validation on a simulated data set.
+
+   **(a)** Generate a simulated data set as follows:
+
+```{r}
+set.seed(500)
+y = rnorm(500)
+x = 4 - rnorm(500)
+y <- x - 2*x^2 + 3*x^4 + rnorm(500)
+```
+
+In this data set, what is n and what is p? Write out the model used to generate the data in equation form.
+
+**Answer** : In this data set:
+
+$n = 500$ is the size of the data set
+
+$p = 1$ we have only one predictor
+
+$Y = X - 2X^2 + 3X^4 + \varepsilon$
+
+**(b)** Create a scatterplot of X against Y. Comment on what you find.
+```{r}
+plot(x,y)
+```
+
+The data obviously suggests a curved relationship
+
+**(c)** Set the seed to be 23, and then compute the LOOCV and 10-fold CV errors that result from fitting the following four models using least squares:
+
+**i)** $Y=\beta_0+ \beta_1X + \varepsilon$ 
+
+**ii)** $Y=\beta_0+ \beta_1X + \beta_2X^2 + \varepsilon$ 
+
+**iii)** $Y=\beta_0+ \beta_1X + \beta_2X^2 + \beta_3X^3+ \varepsilon$ 
+
+**iv)** $Y=\beta_0+ \beta_1X + \beta_2X^2 + \beta_3X^3+\beta_4X^4 + \varepsilon$ 
+
+```{r}
+library(boot)
+set.seed(23)
+Data <- data.frame(x, y)
+```
+
+### $Y=\beta_0+ \beta_1X + \varepsilon$
+```{r}
+model.linear <- glm(y~poly(x,1),data = Data)
+cv.err.1 <- cv.glm(Data,model.linear) ##LOOCV
+cv.err.1$delta[1]
+cv.err.1k <- cv.glm(Data,model.linear,K=10) ##K-fold
+cv.err.1k$delta[1]
+```
+
+### $Y=\beta_0+ \beta_1X + \beta_2X^2 + \varepsilon$
+```{r}
+model.quadratic <- glm(y~poly(x,2),data = Data)
+cv.err.2 <- cv.glm(Data,model.quadratic) ##LOOCV
+cv.err.2$delta[1]
+cv.err.2k <- cv.glm(Data,model.quadratic,K=10) ##K-fold
+cv.err.2k$delta[1]
+```
+
+### $Y=\beta_0+ \beta_1X + \beta_2X^2 + \beta_3X^3+ \varepsilon$
+```{r}
+model.cubic <- glm(y~poly(x,3),data = Data)
+cv.err.3 <- cv.glm(Data,model.cubic) ##LOOCV
+cv.err.3$delta[1]
+cv.err.3k <- cv.glm(Data, model.cubic,K=10) ##K-fold
+cv.err.3k$delta[1]
+```
+
+### $Y=\beta_0+ \beta_1X + \beta_2X^2 + \beta_3X^3+\beta_4X^4 + \varepsilon$
+```{r}
+model.quartic <- glm(y~poly(x,4),data = Data)
+cv.err.4 <- cv.glm(Data, model.quartic) ##LOOCV
+cv.err.4$delta[1]
+cv.err.4k <- cv.glm(Data, model.quartic, K=10) ##K-fold
+cv.err.4k$delta[1]
+```
+
+Our data seems to have a quatric relationship as the polynomial 4th grade give as the least CV error for both cross validation methods (LOOCV & K-fold CV)
+
+**(d)** Repeat (c) using random seed 46, and report your results. Are your results the same as what you got in (c)? Why?
+
+```{r}
+set.seed(46)
+Data <- data.frame(x, y)
+```
+### $Y=\beta_0+ \beta_1X + \varepsilon$
+```{r}
+model.linear <- glm(y~poly(x,1),data = Data)
+cv.err.1 <- cv.glm(Data,model.linear) ##LOOCV
+cv.err.1$delta[1]
+cv.err.1k <- cv.glm(Data,model.linear,K=10) ##K-fold
+cv.err.1k$delta[1]
+```
+### $Y=\beta_0+ \beta_1X + \beta_2X^2 + \varepsilon$
+```{r}
+model.quadratic<- glm(y~poly(x,2),data = Data)
+cv.err.2 <- cv.glm(Data,model.quadratic ) ##LOOCV
+cv.err.2$delta[1]
+cv.err.2k <- cv.glm(Data,model.quadratic,K=10) ##K-fold
+cv.err.2k$delta[1]
+```
+### $Y=\beta_0+ \beta_1X + \beta_2X^2 + \beta_3X^3+ \varepsilon$
+```{r}
+model.cubic <- glm(y~poly(x,3),data = Data)
+cv.err.3 <- cv.glm(Data,model.cubic) ##LOOCV
+cv.err.3$delta[1]
+cv.err.3k <- cv.glm(Data, model.cubic,K=10) ##K-fold
+cv.err.3k$delta[1]
+```
+### $Y=\beta_0+ \beta_1X + \beta_2X^2 + \beta_3X^3+\beta_4X^4 + \varepsilon$
+```{r}
+model.quartic <- glm(y~poly(x,4),data = Data)
+cv.err.4 <- cv.glm(Data, model.quartic) ##LOOCV
+cv.err.4$delta[1]
+cv.err.4k <- cv.glm(Data, model.quartic, K=10) ##K-fold
+cv.err.4k$delta[1]
+```
+
+The results above are identical to the results obtained in (c) since both LOOCV and K-fold CV methods produces a less variable CV-error 
+for different seeds. Performing LOOCV multiple times will always yield the same results because we fit a model n times so the CV-error will not varry.
+On the other hand K-fold Cross Validation will also take a good portion of our sample (k-folds) so we generally expect to have low variance between different CV_k results. 
+
+**(e)** Which of the models in (c) had the smallest LOOCV and 10-fold CV error?Is this what you expected? Explain your answer.
+
+**Answer**:
+
+The cross validation error is least for the quartic function  **$Y=\beta_0+ \beta_1X + \beta_2X^2 + \beta_3X^3+\beta_4X^4 + \varepsilon$**.
+This was expected as the plot showed no linear,quadratic or cubic relationship.
+
+**(f)** Comment on the statistical significance of the coefficient estimates that results from fitting each of the models in (c) using least squares. Do these results agree with the conclusions drawn based on the cross-validation results?
+
+**Answer**:
+
+```{r}
+summary(model.quartic)
+model.fifth <- glm(y~poly(x,6))
+summary(model.fifth)
+
+```
+
+
+
+- The following command that produced a forth-order polynomial fit suggests that including additional polynomial terms up to fourth order leads to an improvement in the model fit. This agree strongly with our cross-validation results which were minimum for the quartic model. However, further investigation of the data reveals that no polynomial terms beyond forth order have significant p-values in a regression fit.
+
+
+
+- - -
+ 
